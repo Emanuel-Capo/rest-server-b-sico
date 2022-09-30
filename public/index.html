@@ -4,9 +4,91 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso denegado</title>
+    <!-- <meta name="google-signin-client_id" content="351888256351-nen9s2jg1rb976ku4pr6o8fstamqt6nv.apps.googleusercontent.com"> -->
+    <title>Google SignIn</title>
 </head>
 <body>
-    <h1>Acceso denegado</h1>
+    <h1>Google SignIn</h1>
+    <hr>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <div id="g_id_onload"
+         data-client_id="351888256351-nen9s2jg1rb976ku4pr6o8fstamqt6nv.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse">
+    </div>
+    <div class="g_id_signin" data-type="standard"></div>
+
+    <script>
+
+        var url= (window.location.hostname.includes('localhost'))
+                ? 'http://localhost:8080/api/auth/google'
+                : 'HEROKU/api/auth/google'
+
+        function handleCredentialResponse(response) {
+            console.log(response.credential)
+            var id_token=response.credential
+            const data = {id_token}
+
+            fetch(url,{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify(data)
+             })
+             .then(resp=>resp.json())
+             .then(data=> console.log('Mi server',data))
+             .catch(console.log)
+
+        //    // decodeJwtResponse() is a custom function defined by you
+        //    // to decode the credential response.
+        //    const responsePayload = decodeJwtResponse(response.credential);
+      
+        //    console.log("ID: " + responsePayload.sub);
+        //    console.log('Full Name: ' + responsePayload.name);
+        //    console.log('Given Name: ' + responsePayload.given_name);
+        //    console.log('Family Name: ' + responsePayload.family_name);
+        //    console.log("Image URL: " + responsePayload.picture);
+        //    console.log("Email: " + responsePayload.email);
+        }
+      </script>
+    
+    <!-- <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <a href="#" onclick="signOut();">Sign out</a>
+
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    
+
+    <script>
+
+        var url= (window.location.hostname.includes('localhost'))
+                ? 'http://localhost:8080/api/auth/google'
+                : 'HEROKU/api/auth/google'
+
+        function onSignIn(googleUser) {
+             var profile = googleUser.getBasicProfile();
+             console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+             console.log('Name: ' + profile.getName());
+             console.log('Image URL: ' + profile.getImageUrl());
+             console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+
+             var id_token = googleUser.getAuthResponse().id_token;
+             const data = {id_token}
+
+             fetch(url,{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify(data)
+             })
+             .then(resp=>resp.json())
+             .then(data=> console.log('Mi server',data))
+             .catch(console.log)
+        }     
+        
+        function signOut() {
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(function () {
+              console.log('User signed out.');
+            });
+        } 
+    </script> -->
 </body>
 </html>
